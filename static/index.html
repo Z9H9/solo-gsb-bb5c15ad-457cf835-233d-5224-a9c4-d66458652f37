@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实验室配液约束求解器</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>🧪 实验室配液约束求解器</h1>
+  <p class="subtitle">统一单位 · 体积守恒 · 浓度约束 · 库存上限 —— 求解各库存液用量与稀释剂补量</p>
+</header>
+
+<main class="container">
+
+  <!-- ==================== 库存溶液 ==================== -->
+  <section class="card" id="stocks-section">
+    <div class="card-head">
+      <h2>1. 库存溶液</h2>
+      <div class="head-actions">
+        <button class="btn btn-ghost" id="btn-demo">载入演示数据</button>
+        <button class="btn btn-ghost danger" id="btn-clear-stocks">清空库存</button>
+      </div>
+    </div>
+
+    <form id="stock-form" class="grid-form">
+      <input type="hidden" id="stock-id">
+      <label>溶液名称
+        <input type="text" id="st-name" placeholder="如：NaCl 储液" required>
+      </label>
+      <label>溶质
+        <input type="text" id="st-solute" list="solute-list" placeholder="如：NaCl" required>
+      </label>
+      <label>浓度
+        <input type="number" id="st-conc" min="0" step="any" placeholder="如：5" required>
+      </label>
+      <label>浓度单位
+        <select id="st-conc-unit"></select>
+      </label>
+      <label>密度 <span class="hint">(w/w 时必填)</span>
+        <input type="number" id="st-density" min="0" step="any" placeholder="可选">
+      </label>
+      <label>密度单位
+        <select id="st-density-unit"></select>
+      </label>
+      <label>可用体积
+        <input type="number" id="st-avail" min="0" step="any" placeholder="如：200" required>
+      </label>
+      <label>体积单位
+        <select id="st-vol-unit"></select>
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="st-submit">添加库存液</button>
+        <button type="button" class="btn btn-ghost hidden" id="st-cancel">取消编辑</button>
+      </div>
+    </form>
+    <datalist id="solute-list"></datalist>
+
+    <div class="table-wrap">
+      <table id="stocks-table">
+        <thead>
+          <tr>
+            <th>溶液名称</th><th>溶质</th><th>浓度</th><th>密度</th>
+            <th>可用体积</th><th class="col-actions">操作</th>
+          </tr>
+        </thead>
+        <tbody id="stocks-tbody"></tbody>
+      </table>
+      <p class="empty-tip" id="stocks-empty">暂无库存液，请在上方添加或点击「载入演示数据」。</p>
+    </div>
+  </section>
+
+  <!-- ==================== 目标配方 ==================== -->
+  <section class="card" id="recipe-section">
+    <div class="card-head"><h2>2. 目标配方</h2></div>
+    <div class="recipe-total">
+      <label>目标总体积
+        <input type="number" id="total-volume" min="0" step="any" value="100">
+      </label>
+      <label>单位
+        <select id="total-volume-unit"></select>
+      </label>
+    </div>
+
+    <h3>各溶质目标浓度</h3>
+    <div class="table-wrap">
+      <table id="targets-table">
+        <thead>
+          <tr><th>溶质</th><th>目标浓度</th><th>单位</th><th class="col-actions"></th></tr>
+        </thead>
+        <tbody id="targets-tbody"></tbody>
+      </table>
+    </div>
+    <button class="btn btn-ghost" id="btn-add-target">＋ 添加溶质</button>
+
+    <div class="solve-bar">
+      <button class="btn btn-big btn-primary" id="btn-solve">求解取液方案</button>
+    </div>
+  </section>
+
+  <!-- ==================== 求解结果 ==================== -->
+  <section class="card hidden" id="result-section">
+    <div class="card-head"><h2>3. 求解结果</h2>
+      <span id="result-badge"></span>
+    </div>
+    <div id="result-body"></div>
+  </section>
+
+  <!-- ==================== 保存方案 ==================== -->
+  <section class="card hidden" id="save-section">
+    <div class="card-head"><h2>4. 保存方案</h2></div>
+    <div class="save-bar">
+      <input type="text" id="plan-name" placeholder="方案名称，如：周一培养基补料">
+      <button class="btn btn-primary" id="btn-save-plan">保存当前配方与结果</button>
+    </div>
+    <p class="hint">保存的是配方快照与本次结果；库存变化后可在下方「用最新库存再计算」。</p>
+  </section>
+
+  <!-- ==================== 已保存方案 ==================== -->
+  <section class="card" id="plans-section">
+    <div class="card-head"><h2>5. 已保存方案</h2></div>
+    <div class="table-wrap">
+      <table id="plans-table">
+        <thead>
+          <tr>
+            <th>#</th><th>方案名</th><th>总体积</th><th>溶质数</th>
+            <th>状态</th><th>保存时间</th><th class="col-actions">操作</th>
+          </tr>
+        </thead>
+        <tbody id="plans-tbody"></tbody>
+      </table>
+      <p class="empty-tip" id="plans-empty">暂无已保存方案。</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>实验室配液约束求解器 · FastAPI + SQLite + 原生 HTML/JS</span>
+</footer>
+
+<div id="toast" class="toast hidden"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
