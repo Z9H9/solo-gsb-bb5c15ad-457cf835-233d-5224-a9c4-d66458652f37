@@ -1,0 +1,11 @@
+services:
+  lab-solver:
+    build: .
+    image: lab-solution-solver:latest
+    container_name: lab-solution-solver
+    ports:
+      - "8000:8000"
+    volumes:
+      # SQLite 数据库持久化到宿主机
+      - ./data:/data
+    restart: unless-stopped

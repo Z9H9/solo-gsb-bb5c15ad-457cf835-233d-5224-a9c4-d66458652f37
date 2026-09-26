@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验室配液约束求解器</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>🧪 实验室配液约束求解器</h1>
+  <p class="subtitle">录入库存溶液与目标配方，自动求解满足 <b>体积守恒 · 浓度约束 · 库存上限</b> 的取液方案</p>
+</header>
+
+<main class="layout">
+  <!-- ================= 左：输入区 ================= -->
+  <section class="panel">
+    <h2>目标配方</h2>
+    <div class="row">
+      <label>配方名称（保存时使用）
+        <input type="text" id="planName" placeholder="例如：500 mL TAE 1× 工作液" />
+      </label>
+    </div>
+    <div class="row inline-group">
+      <label>目标总体积
+        <input type="number" id="targetVolume" value="500" min="0" step="any" />
+      </label>
+      <label>单位
+        <select id="targetVolumeUnit"></select>
+      </label>
+    </div>
+
+    <h3>目标溶质浓度</h3>
+    <div id="targetList"></div>
+    <button class="btn small" id="addTarget">＋ 添加目标溶质</button>
+
+    <h2 style="margin-top:28px">库存溶液</h2>
+    <div id="stockList"></div>
+    <button class="btn small" id="addStock">＋ 添加库存溶液</button>
+
+    <h2 style="margin-top:28px">求解选项</h2>
+    <div class="options">
+      <label class="checkbox">
+        <input type="checkbox" id="allowDiluent" checked />
+        允许用不限量的额外纯水补足体积
+      </label>
+      <label>稀释剂名称
+        <input type="text" id="diluentName" value="纯水（补充稀释剂）" />
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="allowForeign" />
+        允许使用含目标之外溶质的库存液
+      </label>
+      <label>优化策略
+        <select id="strategy">
+          <option value="min_stock">取液总量最少（优先浓储液）</option>
+          <option value="min_diluent">稀释剂用量最少（尽量多用库存液）</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" id="solveBtn">▶ 求解取液方案</button>
+      <button class="btn" id="saveBtn">💾 保存方案</button>
+      <button class="btn ghost" id="resetBtn">重置示例</button>
+    </div>
+  </section>
+
+  <!-- ================= 右：结果 + 已保存 ================= -->
+  <section class="panel">
+    <h2>求解结果</h2>
+    <div id="result" class="result">
+      <p class="muted">填写左侧参数后点击“求解取液方案”。</p>
+    </div>
+
+    <h2 style="margin-top:28px">已保存方案</h2>
+    <div id="savedList" class="saved-list">
+      <p class="muted">暂无保存方案。</p>
+    </div>
+  </section>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
